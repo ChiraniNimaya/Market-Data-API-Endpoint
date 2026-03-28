@@ -28,7 +28,7 @@ async def fetch_monthly_data(symbol: str) -> dict:
         raise ValueError(f"Invalid symbol '{symbol}'")
 
     if "Information" in data:
-        raise ValueError(f"API rate limit reached")
+        raise ValueError(f"API info: {data['Information']}")
     
     if "Note" in data:
         raise ValueError(f"Error Note: {data['Note']}")
