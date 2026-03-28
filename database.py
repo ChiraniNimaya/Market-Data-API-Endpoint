@@ -1,5 +1,6 @@
 import sqlite3
 from config import DB_PATH
+from response_body import annual_market_data_response
  
 MONTHS_IN_YEAR = 12
  
@@ -86,11 +87,8 @@ def get_annual_data(symbol: str, year: int):
         if row["max_high"] is None:
             return None
  
-        return {
-            "high": row["max_high"],
-            "low":  row["min_low"],
-            "volume": row["annual_volume"]
-        }
+        return annual_market_data_response(row["max_high"], row["min_low"], row["annual_volume"])
+    
     except sqlite3.Error as e:
         raise RuntimeError(f"Error Calculating annual market data: {e}") from e
     finally:
