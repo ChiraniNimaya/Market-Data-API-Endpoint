@@ -31,6 +31,9 @@ Sample `.env`:
 ```
 # Your AlphaVantage API key
 API_KEY=your_api_key_here
+
+# 3rd party API URL
+ALPHAVANTAGE_URL="https://www.alphavantage.co/query?function={function}&symbol={symbol}&apikey={API_KEY}"
 ```
 
 **Note:** Never commit your real API keys to version control.
@@ -41,8 +44,12 @@ API_KEY=your_api_key_here
 uvicorn main:app --reload
 ```
 
-The API will be available locally at: http://localhost:8000/
-Annual data request results can be found at : http://localhost:8000/symbols/{symbol}/annual/{year}
+### The API will be available locally at: 
+http://localhost:8000/
+
+### Annual data request results can be triggered using : 
+http://localhost:8000/symbols/{symbol}/annual/{year}
+
 ---
 
 ## How it works
@@ -68,4 +75,4 @@ Annual data request results can be found at : http://localhost:8000/symbols/{sym
 - **Uvicorn**: ASGI server
 - **httpx**: Async HTTP requests
 - **slowapi**: Rate limiting
-- **python-dotenv**: Load environment variables from .env file
+- **python-dotenv**: Load environment variables from `.env` file
