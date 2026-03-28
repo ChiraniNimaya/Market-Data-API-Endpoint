@@ -4,7 +4,6 @@ from config import API_KEY, API_URL
 
 def fetch_monthly_data(symbol: str) -> dict:
     params = {
-        "function": "TIME_SERIES_MONTHLY",
         "symbol": symbol,
         "apikey": API_KEY,
     }
