@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from pydantic_core import ValidationError
 from slowapi import Limiter
 from slowapi.util import get_remote_address
+import logging
 
 from config import REQUEST_RATE_LIMIT_PER_MIN
 from database import init_db, save_monthly_data, get_annual_data
@@ -10,6 +11,12 @@ from market_data_client import fetch_monthly_data
 from validation import MarketDataRequest
 
 limiter = Limiter(key_func=get_remote_address)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -36,10 +43,15 @@ async def get_market_data(request: Request, symbol: str, year: int):
     
     result = get_annual_data(params.symbol, params.year)
     if result:
+        logger.info(f"Data was found from local cache for symbol='{params.symbol}' year={params.year}")
         return result
+    logger.info(f"Data was not found from local cache for symbol='{params.symbol}' year={params.year}")
     try:
         monthly_series = await fetch_monthly_data(params.symbol)
+        logger.info(f"Data fetched from API for symbol='{params.symbol}' year={params.year}")
+        
         save_monthly_data(params.symbol, monthly_series)
+        logger.info(f"New Data saved to database for symbol='{params.symbol}' year={params.year}")
 
         result = get_annual_data(params.symbol, params.year)
         if result is None:
