@@ -1,6 +1,8 @@
 from dotenv import load_dotenv
 import os
 
+EXTERNAL_REQUEST_TIMEOUT = 15 #seconds
+
 load_dotenv()
 
 API_KEY = os.getenv("API_KEY")
