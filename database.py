@@ -87,14 +87,12 @@ def get_annual_data(symbol: str, year: int):
             return None
  
         return {
-            "symbol":      symbol.upper(),
-            "year":        year,
-            "max_high": row["max_high"],
-            "min_low":  row["min_low"],
-            "annual_volume": row["annual_volume"]
+            "high": row["max_high"],
+            "low":  row["min_low"],
+            "volume": row["annual_volume"]
         }
     except sqlite3.Error as e:
-        raise RuntimeError(f"Error Calculating annual data: {e}") from e
+        raise RuntimeError(f"Error Calculating annual market data: {e}") from e
     finally:
         conn.close()
 	
