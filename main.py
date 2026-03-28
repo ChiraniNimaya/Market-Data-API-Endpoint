@@ -39,7 +39,11 @@ async def get_market_data(request: Request, symbol: str, year: int):
     try:
         params = MarketDataRequest(symbol=symbol, year=year)
     except ValidationError as e:
-        raise HTTPException(status_code=422, detail=e.errors())
+        logger.error(f"Validation failed for symbol='{symbol}' year={year}")
+        raise HTTPException(
+            status_code=422,
+            detail=MarketDataRequest.serializable_errors(e)  
+        )
     
     result = get_annual_data(params.symbol, params.year)
     if result:
@@ -47,11 +51,12 @@ async def get_market_data(request: Request, symbol: str, year: int):
         return result
     logger.info(f"Data was not found from local cache for symbol='{params.symbol}' year={params.year}")
     try:
+        logger.info(f"Data fetching from API for symbol='{params.symbol}'")
         monthly_series = await fetch_monthly_data(params.symbol)
-        logger.info(f"Data fetched from API for symbol='{params.symbol}' year={params.year}")
+        logger.info(f"Data fetched='{monthly_series}'")
         
         save_monthly_data(params.symbol, monthly_series)
-        logger.info(f"New Data saved to database for symbol='{params.symbol}' year={params.year}")
+        logger.info(f"New Data saved to database for symbol='{params.symbol}'")
 
         result = get_annual_data(params.symbol, params.year)
         if result is None:
@@ -62,5 +67,8 @@ async def get_market_data(request: Request, symbol: str, year: int):
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    except HTTPException:
+        raise
     except Exception as e:
+        logger.error(f"Unexpected error for symbol='{params.symbol}': {e}")
         raise HTTPException(status_code=500, detail=f"{e} Retry later.")

@@ -36,4 +36,8 @@ async def fetch_monthly_data(symbol: str) -> dict:
     if "Monthly Time Series" not in data:
         raise ValueError(f"Unexpected response: {data}")
 
-    return data["Monthly Time Series"]
+    monthly_series = data["Monthly Time Series"]
+    if not monthly_series:
+        raise ValueError(f"No data available for symbol '{symbol}'")
+
+    return monthly_series

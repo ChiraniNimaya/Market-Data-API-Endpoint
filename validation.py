@@ -26,3 +26,13 @@ class MarketDataRequest(BaseModel):
         if value > datetime.datetime.now().year:
             raise ValueError("Year cannot be in the future")
         return value
+    
+    @staticmethod
+    def serializable_errors(e) -> list[dict]:
+        return [
+            {
+                "field": err["loc"][0],
+                "message": err["msg"]
+            }
+            for err in e.errors()
+        ]
