@@ -35,7 +35,7 @@ def init_db():
 def save_monthly_data(symbol: str, monthly_series: dict):
     try:
         rows = [
-            (symbol.upper(), date, int(date[:4]), float(values["2. high"]), float(values["3. low"]), int(values["5. volume"]))
+            (symbol, date, int(date[:4]), float(values["2. high"]), float(values["3. low"]), int(values["5. volume"]))
             for date, values in monthly_series.items()
         ]
     except (KeyError, ValueError) as e:
@@ -66,7 +66,7 @@ def get_annual_data(symbol: str, year: int):
             FROM monthly_data
             WHERE symbol = ? AND year = ?
             """,
-            (symbol.upper(), year),
+            (symbol, year),
         ).fetchone()
 
         if count_row["count"] < MONTHS_IN_YEAR:
@@ -81,7 +81,7 @@ def get_annual_data(symbol: str, year: int):
             FROM monthly_data
             WHERE symbol = ? AND year = ?
             """,
-            (symbol.upper(), year),
+            (symbol, year),
         ).fetchone()
     
         if row["max_high"] is None:
