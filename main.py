@@ -53,7 +53,6 @@ async def get_market_data(request: Request, symbol: str, year: int):
     try:
         logger.info(f"Data fetching from API for symbol='{params.symbol}'")
         monthly_series = await fetch_monthly_data(params.symbol)
-        logger.info(f"Data fetched='{monthly_series}'")
         
         save_monthly_data(params.symbol, monthly_series)
         logger.info(f"New Data saved to database for symbol='{params.symbol}'")
